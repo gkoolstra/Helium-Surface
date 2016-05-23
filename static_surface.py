@@ -365,38 +365,38 @@ def select_domain(X, Y, Esquared, xdomain=None, ydomain=None):
     """
 
     if xdomain is None:
-        xmin = min(X[:,0])
-        xmax = max(X[:,0])
+        xmin = np.min(X[:,0])
+        xmax = np.max(X[:,0])
         if ydomain is None:
-            ymin = min(Y[0,:])
-            ymax = max(Y[0,:])
+            ymin = np.min(Y[0,:])
+            ymax = np.max(Y[0,:])
     elif ydomain is None:
-        ymin = min(Y[0,:])
-        ymax = max(Y[0,:])
+        ymin = np.min(Y[0,:])
+        ymax = np.max(Y[0,:])
     else:
         xmin, xmax = xdomain
         ymin, ymax = ydomain
 
-    if shape(X) == shape(Y) == shape(Esquared):
-        if len(shape(X)) > 1 and len(shape(Y)) > 1:
+    if np.shape(X) == np.shape(Y) == np.shape(Esquared):
+        if len(np.shape(X)) > 1 and len(np.shape(Y)) > 1:
             x = X[:,0]
             y = Y[0,:]
         else:
             print "The shape of X and/or Y are not consistent. Aborting. Please Check."
             return
 
-        x_cut = x[logical_and(x>=xmin, x<=xmax)]
-        y_cut = y[logical_and(y>=ymin, y<=ymax)]
+        x_cut = x[np.logical_and(x>=xmin, x<=xmax)]
+        y_cut = y[np.logical_and(y>=ymin, y<=ymax)]
 
-        xidx = where(logical_and(x>=xmin, x<=xmax))[0]
-        yidx = where(logical_and(y>=ymin, y<=ymax))[0]
+        xidx = np.where(np.logical_and(x>=xmin, x<=xmax))[0]
+        yidx = np.where(np.logical_and(y>=ymin, y<=ymax))[0]
 
-        Esquared_cut = transpose(Esquared[xidx[0]:xidx[-1]+1, yidx[0]:yidx[-1]+1])
+        Esquared_cut = np.transpose(Esquared[xidx[0]:xidx[-1]+1, yidx[0]:yidx[-1]+1])
 
         return x_cut, y_cut, Esquared_cut
     else:
         print r"Shapes of X, Y and Esquared are not consistent:\nShape X: %d x %d\nShape Y: %d x %d\nShape Esquared: %d x %d "\
-              %(shape(X)[0], shape(X)[1], shape(Y)[0], shape(Y)[1], shape(Esquared)[0], shape(Esquared)[1])
+              %(np.shape(X)[0], np.shape(X)[1], np.shape(Y)[0], np.shape(Y)[1], np.shape(Esquared)[0], np.shape(Esquared)[1])
 
 
 def z_from_fld(df, V=1.0, h=0.1E-3, d0=0.4E-6, xdomain=None, ydomain=None,
