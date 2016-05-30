@@ -4,7 +4,7 @@ from scipy.sparse.linalg import spsolve
 from numpy import *
 import numpy as np
 import time
-import common
+from Common import common
 
 def reset_constants(verbose=False):
     """
@@ -66,10 +66,10 @@ def z(constants, parameters, x):
     d0 = parameters['d0']
     h = parameters['h']
 
-    dx = diff(x)[0]
+    dx = np.diff(x)[0]
 
     # Solve problem (I)
-    u = d0*ones(len(x))
+    u = d0*np.ones(len(x))
     u[0] = d0
     u[1] = d0
     for idx, X in enumerate(x[2:]):
@@ -113,17 +113,17 @@ def z_with_E(constants, parameters, x, Esq):
     epsHe = constants['epsHe']
     eps0 = constants['eps0']
 
-    dx = diff(x)[0]
+    dx = np.diff(x)[0]
 
     # Solve problem (I)
-    u = d0*ones(len(x))
+    u = d0*np.ones(len(x))
     u[0] = d0
     u[1] = d0
     for idx, X in enumerate(x[2:]):
         u[idx+2] = dx**2/sigma * (rho*g*(h+u[idx+1]) - eps0*(epsHe-1)/2.* Esq[idx]) - (u[idx]-2*u[idx+1])
 
     # Solve problem (II)
-    v = d0*ones(len(x))
+    v = d0*np.ones(len(x))
     v[0] = 0
     v[1] = dx
     for idx, X in enumerate(x[2:]):
@@ -160,17 +160,17 @@ def z_with_E(constants, parameters, x, Esq):
     epsHe = constants['epsHe']
     eps0 = constants['eps0']
 
-    dx = diff(x)[0]
+    dx = np.diff(x)[0]
 
     # Solve problem (I)
-    u = d0*ones(len(x))
+    u = d0*np.ones(len(x))
     u[0] = d0
     u[1] = d0
     for idx, X in enumerate(x[2:]):
         u[idx+2] = dx**2/sigma * (rho*g*(h+u[idx+1]) - eps0*(epsHe-1)/2.* Esq[idx]) - (u[idx]-2*u[idx+1])
 
     # Solve problem (II)
-    v = d0*ones(len(x))
+    v = d0*np.ones(len(x))
     v[0] = 0
     v[1] = dx
     for idx, X in enumerate(x[2:]):
@@ -206,40 +206,40 @@ def z_2D(x, y, constants, parameters, Esquared=None, verbose=True):
     eps0 = constants['eps0']
     epsHe = constants['epsHe']
 
-    dx = diff(x)[0]
-    dy = diff(y)[0]
+    dx = np.diff(x)[0]
+    dy = np.diff(y)[0]
 
     # Construct the matrix
     N = len(x)
     M = len(y)
-    diag_x = -2*(1/dx**2 + 1/dy**2)*ones(N)
-    off_diag_x = 1/dx**2 * ones(N)
-    data = vstack((diag_x, off_diag_x, off_diag_x))
-    offsets = array([0, -1, +1])
+    diag_x = -2*(1/dx**2 + 1/dy**2)*np.ones(N)
+    off_diag_x = 1/dx**2 * np.ones(N)
+    data = np.vstack((diag_x, off_diag_x, off_diag_x))
+    offsets = np.array([0, -1, +1])
     diag_block = dia_matrix((data, offsets), shape=(N,N))
     diag_matrix = block_diag([diag_block]*M)
 
     off_diag_y = 1/dy**2 * ones(M*N)
-    off_diag_matrix = dia_matrix((vstack((off_diag_y, off_diag_y)), array([-N, +N])), shape=(M*N, M*N))
+    off_diag_matrix = dia_matrix((vstack((off_diag_y, off_diag_y)), np.array([-N, +N])), shape=(M*N, M*N))
 
     full_matrix = diag_matrix + off_diag_matrix
 
     # Deal with the electric field
     if Esquared is None:
-        E2 = zeros((M*N))
+        E2 = np.zeros((M*N))
         E2 = E2.flatten()
     else:
         # Reshape the matrix
         if shape(Esquared) == (M,N):
             E2 = Esquared.flatten()
         else:
-            E2 = zeros((M,N))
+            E2 = np.zeros((M,N))
             E2 = E2.flatten()
             print "Althought Esquared was specfied, it doesn't have the right shape: %d x %d. I expected %d x %d. Ignoring Esquared for now." \
-                  % (shape(Esquared)[0], shape(Esquared)[1], M, N)
+                  % (np.shape(Esquared)[0], np.shape(Esquared)[1], M, N)
 
     # Construct the right hand side of the equation and implement boundary conditions
-    rhs = rho*g*h/sigma * ones(M*N) - eps0*(epsHe-1)/(2*sigma)*E2
+    rhs = rho*g*h/sigma * np.ones(M*N) - eps0*(epsHe-1)/(2*sigma)*E2
     # Boundary at y = 0 and y = ymax:
     rhs[1:N-1] -= d0/dy**2
     rhs[N*M-N+1:N*M-1] -= d0/dy**2
@@ -274,7 +274,7 @@ def draw_channel(parameters, x):
     :param x: An array of at least two points defining the x-coordinates of the wall.
     :return:
     """
-    y = 1E6*parameters['d0']*ones(len(x))
+    y = 1E6*parameters['d0']*np.ones(len(x))
     plt.fill_between(x, y, y2=0, alpha=0.2, color='gray', lw=0)
 
 
@@ -292,7 +292,7 @@ def load_maxwell_data(df, do_plot=True, do_log=True, xlim=None, ylim=None, clim=
     :return:
     """
 
-    data = loadtxt(df, skiprows=2)
+    data = np.loadtxt(df, skiprows=2)
     x = data[:,0]
     y = data[:,1]
     z = data[:,2]
@@ -303,13 +303,13 @@ def load_maxwell_data(df, do_plot=True, do_log=True, xlim=None, ylim=None, clim=
         for idx, X in enumerate(x):
             if X != x[0]:
                 ysize=idx
-                xsize=shape(magE)[0]/ysize
+                xsize=np.shape(magE)[0]/ysize
                 break
     else:
         for idx, Y in enumerate(y):
             if Y != y[0]:
                 ysize=idx
-                xsize=shape(magE)[0]/ysize
+                xsize=np.shape(magE)[0]/ysize
                 break
 
     # Cast the voltage data in an array:
@@ -434,7 +434,7 @@ def z_from_fld(df, V=1.0, h=0.1E-3, d0=0.4E-6, xdomain=None, ydomain=None,
     if plot_Efield:
         plt.figure(figsize=(12.,6.))
         common.configure_axes(13)
-        plt.pcolormesh(xcut*1E6, ycut*1E6, log10(Esquaredcut), cmap=plt.cm.Spectral)
+        plt.pcolormesh(xcut*1E6, ycut*1E6, np.log10(Esquaredcut), cmap=plt.cm.Spectral)
         plt.xlabel(r'x ($\mu$m)'); plt.xlim(min(xcut)*1E6, max(xcut)*1E6);
         plt.ylabel(r'y ($\mu$m)'); plt.ylim(min(ycut)*1E6, max(ycut)*1E6);
         plt.colorbar(); plt.title(r'$|E|^2$ for selected domain')
@@ -462,6 +462,52 @@ def z_from_fld(df, V=1.0, h=0.1E-3, d0=0.4E-6, xdomain=None, ydomain=None,
     return xcut, ycut, d
 
 
+def integrate_energy(X, Y, magE, xdomain, ydomain, epsilon_r=1.0, do_plot=False, cmap=plt.cm.viridis, figsize=(7.,4.)):
+    """
+    Returns the electric field energy in a portion of the domain specified by (xmin, xmax) and (ymin, ymax)
+    If the region is filled with a different dielectric than vacuum, you can set epsilon_r > 1.0
+    :param x: 2D array of X data
+    :param y: 2D array of Y data
+    :param magE: 2D array containing the magnitude of the electric field
+    :param xdomain: (xmin, xmax)
+    :param ydomain: (ymin, ymax)
+    :param epsilon_r: Must be >= 1.0
+    :param do_plot: Plot the cropped magE matrix
+    :return: 0.5* epsilon_0 * epsilon_r * np.sum(np.abs(magE_selection)**2) * dx * dy
+    """
+    epsilon_0 = 8.85E-12
+    x = X[:,0]
+    y = Y[0,:]
+
+    xmin, xmax = xdomain
+    ymin, ymax = ydomain
+
+    # Select the region that you want to integrate over:
+    n_start = common.find_nearest(x, xmin)
+    n_stop = common.find_nearest(x, xmax)
+
+    m_start = common.find_nearest(y, ymin)
+    m_stop = common.find_nearest(y, ymax)
+
+    #print n_start, n_stop, m_start, m_stop
+
+    magE_selection = magE[n_start:n_stop, m_start:m_stop]
+
+    if do_plot:
+        plt.figure(figsize=figsize)
+        plt.pcolormesh(X[n_start:n_stop, m_start:m_stop]*1E6, Y[n_start:n_stop, m_start:m_stop]*1E6,
+                       np.log10(magE_selection), cmap=cmap)
+        plt.colorbar()
+        #plt.clim(4, 6)
+        plt.xlim([xmin*1E6, xmax*1E6]);
+        plt.ylim([ymin*1E6, ymax*1E6]);
+        plt.xlabel('x ($\mu\mathrm{m}$)')
+        plt.ylabel('y ($\mu\mathrm{m}$)')
+
+    dx = np.diff(x)[0]
+    dy = np.diff(y)[0]
+
+    return 0.5* epsilon_0 * epsilon_r * np.sum(np.abs(magE_selection)**2) * dx * dy
 
 
 
