@@ -498,7 +498,6 @@ def integrate_energy(X, Y, magE, xdomain, ydomain, epsilon_r=1.0, do_plot=False,
         plt.pcolormesh(X[n_start:n_stop, m_start:m_stop]*1E6, Y[n_start:n_stop, m_start:m_stop]*1E6,
                        np.log10(magE_selection), cmap=cmap)
         plt.colorbar()
-        #plt.clim(4, 6)
         plt.xlim([xmin*1E6, xmax*1E6]);
         plt.ylim([ymin*1E6, ymax*1E6]);
         plt.xlabel('x ($\mu\mathrm{m}$)')
@@ -507,7 +506,7 @@ def integrate_energy(X, Y, magE, xdomain, ydomain, epsilon_r=1.0, do_plot=False,
     dx = np.diff(x)[0]
     dy = np.diff(y)[0]
 
-    return 0.5* epsilon_0 * epsilon_r * np.sum(np.abs(magE_selection)**2) * dx * dy
+    return 0.5 * epsilon_0 * epsilon_r * np.sum(np.abs(magE_selection)**2) * dx * dy
 
 
 
