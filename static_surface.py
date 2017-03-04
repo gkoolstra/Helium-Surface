@@ -39,9 +39,9 @@ def print_constants_parameters(constants, parameters):
     :return:
     """
     for c in constants.keys():
-        print "%s = %e" % (c, constants[c])
+        print("%s = %e" % (c, constants[c]))
     for p in parameters.keys():
-        print "%s = %e" % (p, parameters[p])
+        print("%s = %e" % (p, parameters[p]))
 
 
 def z(constants, parameters, x):
@@ -235,8 +235,8 @@ def z_2D(x, y, constants, parameters, Esquared=None, verbose=True):
         else:
             E2 = np.zeros((M,N))
             E2 = E2.flatten()
-            print "Althought Esquared was specfied, it doesn't have the right shape: %d x %d. I expected %d x %d. Ignoring Esquared for now." \
-                  % (np.shape(Esquared)[0], np.shape(Esquared)[1], M, N)
+            print("Althought Esquared was specfied, it doesn't have the right shape: %d x %d. I expected %d x %d. Ignoring Esquared for now." \
+                  % (np.shape(Esquared)[0], np.shape(Esquared)[1], M, N))
 
     # Construct the right hand side of the equation and implement boundary conditions
     rhs = rho*g*h/sigma * np.ones(M*N) - eps0*(epsHe-1)/(2*sigma)*E2
@@ -262,7 +262,7 @@ def z_2D(x, y, constants, parameters, Esquared=None, verbose=True):
     t1 = time.time()
 
     if verbose:
-        print "Solution took %.3f s" % (t1-t0)
+        print("Solution took %.3f s" % (t1-t0))
 
     return solution.reshape((M,N))
 
@@ -382,7 +382,7 @@ def select_domain(X, Y, Esquared, xdomain=None, ydomain=None):
             x = X[:,0]
             y = Y[0,:]
         else:
-            print "The shape of X and/or Y are not consistent. Aborting. Please Check."
+            print("The shape of X and/or Y are not consistent. Aborting. Please Check.")
             return
 
         x_cut = x[np.logical_and(x>=xmin, x<=xmax)]
@@ -395,8 +395,8 @@ def select_domain(X, Y, Esquared, xdomain=None, ydomain=None):
 
         return x_cut, y_cut, Esquared_cut
     else:
-        print r"Shapes of X, Y and Esquared are not consistent:\nShape X: %d x %d\nShape Y: %d x %d\nShape Esquared: %d x %d "\
-              %(np.shape(X)[0], np.shape(X)[1], np.shape(Y)[0], np.shape(Y)[1], np.shape(Esquared)[0], np.shape(Esquared)[1])
+        print(r"Shapes of X, Y and Esquared are not consistent:\nShape X: %d x %d\nShape Y: %d x %d\nShape Esquared: %d x %d "\
+              %(np.shape(X)[0], np.shape(X)[1], np.shape(Y)[0], np.shape(Y)[1], np.shape(Esquared)[0], np.shape(Esquared)[1]))
 
 
 def z_from_fld(df, V=1.0, h=0.1E-3, d0=0.4E-6, xdomain=None, ydomain=None,
@@ -425,7 +425,7 @@ def z_from_fld(df, V=1.0, h=0.1E-3, d0=0.4E-6, xdomain=None, ydomain=None,
     X,Y,E0 = load_maxwell_data(df, do_plot=False)
 
     if verbose:
-        print "Loaded data from FLD file..."
+        print("Loaded data from FLD file...")
 
     # Cut the data for processing.
     xcut, ycut, Esquaredcut = select_domain(X, Y, V**2 * E0**2, xdomain=xdomain, ydomain=ydomain)
